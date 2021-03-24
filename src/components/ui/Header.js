@@ -9,6 +9,15 @@ import Button from '@material-ui/core/Button';
 import {Link} from "react-router-dom";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import {theme, useTheme} from "@material-ui/core/styles";
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import MenuIcon from "@material-ui/icons/Menu";
+import IconButton from '@material-ui/core/IconButton';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
 
 function ElevationScroll(props) {
     const { children } = props;
@@ -25,12 +34,23 @@ function ElevationScroll(props) {
 const useStyles= makeStyles(theme => ({
     toolbarMargin: {
         ...theme.mixins.toolbar,
-        marginBottom: "3em"
+        marginBottom: "3em",
+        [theme.breakpoints.down("md")]: {
+            marginBottom: "2em"
+        },
+        [theme.breakpoints.down("xs")]: {
+            marginBottom: "1.25em"
+        }
     },
     logo: {
         height: "8em",
-        textTransform: 'none'
-        
+        textTransform: 'none',
+        [theme.breakpoints.down("md")]: {
+            height: "7em"
+        },
+        [theme.breakpoints.down("xs")]: {
+            height: "5.5em"
+        }
     },
     logoContainer: {
         padding: 0,
@@ -64,6 +84,35 @@ const useStyles= makeStyles(theme => ({
         "&:hover" : {
             opacity: 1
         }
+    },
+    drawerIconContainer: {
+        marginLeft: "auto",
+        "&:hover": {
+            backgroundColor: "transparent"
+        }
+    },
+    drawerIcon: {
+        height: "50px",
+        width: "50px"
+    },
+    drawer: {
+        backgroundColor: theme.palette.common.blue
+    },
+    drawerItem: {
+        ...theme.typography.tab,
+        color: "white",
+        opacity: 0.7
+    },
+    drawerItemEstimate: {
+        backgroundColor: theme.palette.common.orange
+    },
+    drawerItemSelected: {
+        "& .MuiListItemText-root": {
+            opacity: 1
+        }
+    },
+    appbar: {
+        zIndex: theme.zIndex.modal + 1
     }
 
 }))
@@ -72,139 +121,102 @@ export default function Header(props) {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const theme = useTheme();
+    const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
 
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [openMenu, setOpenMenu] = useState(false);
+    const matches = useMediaQuery(theme.breakpoints.down("md"));
     const handleChange = (e, value) => {
         setValue(value);
     }
 
-    const handleClick = (e) => {
+    const handleClick = (e, newValue) => {
         setAnchorEl(e.currentTarget)
-        setOpen(true)
+        setOpenMenu(true)
     }
 
     const handleMenuItemClick = (e, i) => {
         setAnchorEl(null);
-        setOpen(false);
+        setOpenMenu(false);
         setSelectedIndex(i)
     }
 
     const handleClose = (e) => {
         setAnchorEl(null)
-        setOpen(false)
+        setOpenMenu(false)
     }
 
-    const menuOptions = [{name: "Services" , link: "/services"}, {name: "Custom Software Development", link: "/customsoftware"}, {name: "Mobile App Development", link: "/mobileapps"}, {name: "Website Development", link: "/websites"}]
+    const menuOptions =  [
+    {name: "Services" , link: "/services", activeIndex: 1, selectedIndex: 0}, 
+    {name: "Custom Software Development", link: "/customsoftware", activeIndex: 1, selectedIndex: 1}, 
+    {name: "Mobile App Development", link: "/mobileapps", activeIndex: 1, selectedIndex: 2}, 
+    {name: "Website Development", link: "/websites", activeIndex: 1, selectedIndex: 3}];
+    
+    const routes = [
+    {name: "Home", link: "/", activeIndex: 0},
+    {name: "Services", link: "/services", activeIndex: 1, ariaOwns: anchorEl ? "simple-menu" : undefined, ariaPopup: anchorEl ? "true" : undefined, mouseOver: event => handleClick(event)},
+    {name: "The Revolution", link: "/revolution", activeIndex: 2},
+    {name: "About Us", link: "/about", activeIndex: 3},
+    {name: "Contact Us", link: "/contact", activeIndex: 4}]
 
     useEffect(() => {
-        if(window.location.pathname ==="/" && value !==0) {
-            setValue(0)
-        }
-        else if(window.location.pathname === "/services" && value!==1) {
-            setValue(1)
-        }
-        else if(window.location.pathname === "/revolution" && value!==2) {
-            setValue(2)
-        }
-        else if(window.location.pathname === "/about" && value!==3) {
-            setValue(3)
-        }
-        else if(window.location.pathname === "/contact" && value!==4) {
-            setValue(4)
-        }
-        else if(window.location.pathname === "/estimate" && value!==5) {
-            setValue(5)
-        }
+        [...menuOptions, ...routes].forEach(route => {
+            switch(window.location.pathname) {
+                case `${route.link}`:
+                    if(value !== route.activeIndex) {
+                        setValue(route.activeIndex) 
+                        if(route.selectedIndex && route.selectedIndex !== selectedIndex) {
+                            setSelectedIndex(route.selectedIndex)
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        })
 
-        switch(window.location.pathname) {
-            case "/":
-                if(value !==0) {
-                    setValue(0)
-                }
-                break;
-            case "/services":
-                if(value !==1) {
-                    setValue(1)
-                    setSelectedIndex(0)
-                 }
-                 break;
-            case "/customsoftware":
-                 if(value !==1) {
-                  setValue(1)
-                  setSelectedIndex(1)
-                }
-                break;
-            case "/mobileapps":
-                if(value !==1) {
-                    setValue(1);
-                    setSelectedIndex(2)
-                }
-                break;
-            case "/websites":
-                if(value !==1) {
-                    setValue(1);
-                    setSelectedIndex(3)
-                }
-                break;
-            case "/revolution": 
-                if(value !==2) {
-                    setValue(2)
-                }
-                break;  
-            
-            case "/about": 
-                if(value !==2) {
-                    setValue(3)
-                }
-                break;  
-            
-            case "/contact": 
-                if(value !==4) {
-                    setValue(4)
-                }
-                break;  
-            
-            case "/estimate": 
-                if(value !==5) {
-                    setValue(5)
-                } 
-                break; 
-            
+    }, [value, menuOptions, selectedIndex, routes]);
 
-            default:
-                break;
-        }
-
-    }, [value]);
-
-    return (
+    const tabs = (
         <React.Fragment>
-        <ElevationScroll>
-        <AppBar position="fixed">
-            <Toolbar disableGutters>
-            <Button component={Link} to="/" className={classes.logoContainer} onClick={()=> setValue(0) } disableRipple>
-            <svg className={classes.logo} id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 139" > <style>{`.st0{fill:none}.st1{fill:#fff}.st2{font-family:Raleway; font-weight:300}.st6{fill:none;stroke:#000;stroke-width:3;stroke-miterlimit:10}`}</style> <path d="M448.07-1l-9.62 17.24-8.36 14.96L369.93 139H-1V-1z" /> <path className="st0" d="M-1 139h479.92v.01H-1z" /> <text transform="translate(261.994 65.233)" className="st1 st2" fontSize="57" > Arc </text> <text transform="translate(17.692 112.015)" className="st1 st2" fontSize="54" > Development </text> <path className="st0" d="M382.44 116.43l47.65-85.23 8.36-14.96M369.83 139l-.01.01L362 153" /> <path d="M438.76 15.76l-56.42 100.91c-12.52-10.83-20.45-26.82-20.45-44.67 0-32.58 26.42-59 59-59 6.23 0 12.24.97 17.87 2.76z" fill="#0b72b9" /> <path d="M479.89 72c0 32.58-26.42 59-59 59-14.73 0-28.21-5.4-38.55-14.33l56.42-100.91c23.85 7.57 41.13 29.89 41.13 56.24z" /> <g id="Group_186" transform="translate(30.153 11.413)"> <g id="Group_185"> <g id="Words"> <path id="Path_59" className="st1" d="M405.05 14.4l-.09 80.38-7.67-.01.06-52.25-29.4 52.21-7.94-.01 45.04-80.32z" /> </g> </g> </g> <path className="st0" d="M457-17l-8.93 16-9.62 17.24-8.36 14.96L369.93 139l-.01.01L361 155" /> </svg>
-            </Button>
             <Tabs 
             value={value}  
             className={classes.tabContainer}
             onChange={handleChange}
             indicatorColor="primary"
             >
-                <Tab className={classes.tab} label="Home" component={Link} to="/" />
-                <Tab aria-owns={anchorEl ? "simple-menu" : undefined} aria-haspopup={anchorEl ? "true" : undefined} onMouseOver={event => handleClick(event)} className={classes.tab} label="Services" component={Link} to="/services"/>
-                <Tab className={classes.tab} label="The Revolution" component={Link} to="/revolution"/>
-                <Tab className={classes.tab} label="About Us" component={Link} to="/about"/>
-                <Tab className={classes.tab} label="Contact Us" component={Link} to="/contact"/>
-            </Tabs>
+                {routes.map(route => (
+                <Tab 
+                    key={`${route.name}`}
+                    className={classes.tab} 
+                    component={Link} 
+                    to={route.link} 
+                    label={route.name} 
+                    aria-owns={route.ariaOwns}
+                    aria-haspopup={route.ariaPopup}
+                    onMouseOver={route.mouseOver}
+                    />
+                ))}
+                </Tabs>
             <Button variant="contained" color="secondary" className={classes.button}>
                 Free Estimate
             </Button>
-            <Menu id="simple-menu" anchorEl={anchorEl} open={open} onClose={handleClose} MenuListProps={{onMouseLeave: handleClose}} classes={{paper: classes.menu}} elevation={0}>
+            <Menu 
+            id="simple-menu" 
+            anchorEl={anchorEl} 
+            open={openMenu} 
+            onClose={handleClose} 
+            MenuListProps={{onMouseLeave: handleClose}} 
+            classes={{paper: classes.menu}} 
+            elevation={0}
+            style={{zIndex: 1302}}
+            keepMounted
+            >
              {menuOptions.map((option, i) => (
-                 <MenuItem key={option} component={Link} to={option.link} 
+                 <MenuItem key={`${option}${i}`} component={Link} to={option.link} 
                  classes={{root: classes.menuItem}}
                  onClick={(event) => {handleMenuItemClick(event,i); setValue(1); handleClose()}}
                  selected={i=== selectedIndex && value ===1}
@@ -213,6 +225,69 @@ export default function Header(props) {
                  </MenuItem>
              ))}
            </Menu>
+        </React.Fragment>
+    );
+
+    const drawer = (
+        <React.Fragment>
+            <SwipeableDrawer 
+            disableBackdropTransition={!iOS} 
+            disableDiscovery={iOS} 
+            open={openDrawer} 
+            onClose={() => setOpenDrawer(false)} onOpen={() => setOpenDrawer(true)}
+            classes={{paper: classes.drawer}}>
+            
+              <div className={classes.toolbarMargin} />
+              <List disablePadding>
+                  {routes.map(route => (
+                      <ListItem 
+                      key={`${route}${route.activeIndex}`} 
+                      divider 
+                      button 
+                      component={Link} 
+                      to={route.link}
+                      classes={{selected: classes.drawerItemSelected}}
+                      selected={value === route.activeIndex} 
+                      onClick={() => {setOpenDrawer(false); 
+                      setValue(route.activeIndex)}}
+                      >
+                          <ListItemText 
+                          className={classes.drawerItem} 
+                          disableTypography
+                          > {route.name}
+                          </ListItemText>
+                      </ListItem>
+                  ))}
+                  <ListItem 
+                  className={classes.drawerItemEstimate}
+                  classes={{roote: classes.drawerItemEstimate, selected: classes.drawerItemSelected}} 
+                  onClick={() => {setOpenDrawer(false); setValue(5)}}  
+                  divider 
+                  button 
+                  component={Link} to="/estimate"
+                  selected ={value === 5}
+                  >
+                      <ListItemText className={classes.drawerItem} disableTypography>
+                          Free Estimate
+                      </ListItemText>
+                  </ListItem>
+              </List>
+            </SwipeableDrawer>
+            <IconButton className={classes.drawerIconContainer} onClick={() => setOpenDrawer(!openDrawer)} disableRipple>
+            <MenuIcon className={classes.drawerIcon} />
+            </IconButton>
+        </React.Fragment>
+    )
+
+    return (
+        <React.Fragment>
+        <ElevationScroll>
+        <AppBar position="fixed" className={classes.appbar}>
+            <Toolbar disableGutters>
+            <Button component={Link} to="/" className={classes.logoContainer} onClick={()=> setValue(0) } disableRipple>
+            <svg className={classes.logo} id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 139" > <style>{`.st0{fill:none}.st1{fill:#fff}.st2{font-family:Raleway; font-weight:300}.st6{fill:none;stroke:#000;stroke-width:3;stroke-miterlimit:10}`}</style> <path d="M448.07-1l-9.62 17.24-8.36 14.96L369.93 139H-1V-1z" /> <path className="st0" d="M-1 139h479.92v.01H-1z" /> <text transform="translate(261.994 65.233)" className="st1 st2" fontSize="57" > Arc </text> <text transform="translate(17.692 112.015)" className="st1 st2" fontSize="54" > Development </text> <path className="st0" d="M382.44 116.43l47.65-85.23 8.36-14.96M369.83 139l-.01.01L362 153" /> <path d="M438.76 15.76l-56.42 100.91c-12.52-10.83-20.45-26.82-20.45-44.67 0-32.58 26.42-59 59-59 6.23 0 12.24.97 17.87 2.76z" fill="#0b72b9" /> <path d="M479.89 72c0 32.58-26.42 59-59 59-14.73 0-28.21-5.4-38.55-14.33l56.42-100.91c23.85 7.57 41.13 29.89 41.13 56.24z" /> <g id="Group_186" transform="translate(30.153 11.413)"> <g id="Group_185"> <g id="Words"> <path id="Path_59" className="st1" d="M405.05 14.4l-.09 80.38-7.67-.01.06-52.25-29.4 52.21-7.94-.01 45.04-80.32z" /> </g> </g> </g> <path className="st0" d="M457-17l-8.93 16-9.62 17.24-8.36 14.96L369.93 139l-.01.01L361 155" /> </svg>
+            </Button>
+             {matches ? drawer : tabs}
             </Toolbar>
            
         </AppBar>
