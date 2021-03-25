@@ -18,7 +18,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-
 function ElevationScroll(props) {
     const { children } = props;
     const trigger = useScrollTrigger({
@@ -119,9 +118,9 @@ const useStyles= makeStyles(theme => ({
 
 export default function Header(props) {
     const classes = useStyles();
-    const [value, setValue] = useState(0);
+    
     const [anchorEl, setAnchorEl] = useState(null);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    
     const theme = useTheme();
     const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -130,7 +129,7 @@ export default function Header(props) {
     const [openMenu, setOpenMenu] = useState(false);
     const matches = useMediaQuery(theme.breakpoints.down("md"));
     const handleChange = (e, value) => {
-        setValue(value);
+        props.setValue(value);
     }
 
     const handleClick = (e, newValue) => {
@@ -141,7 +140,7 @@ export default function Header(props) {
     const handleMenuItemClick = (e, i) => {
         setAnchorEl(null);
         setOpenMenu(false);
-        setSelectedIndex(i)
+        props.setSelectedIndex(i)
     }
 
     const handleClose = (e) => {
@@ -166,10 +165,10 @@ export default function Header(props) {
         [...menuOptions, ...routes].forEach(route => {
             switch(window.location.pathname) {
                 case `${route.link}`:
-                    if(value !== route.activeIndex) {
-                        setValue(route.activeIndex) 
-                        if(route.selectedIndex && route.selectedIndex !== selectedIndex) {
-                            setSelectedIndex(route.selectedIndex)
+                    if(props.value !== route.activeIndex) {
+                        props.setValue(route.activeIndex) 
+                        if(route.selectedIndex && route.selectedIndex !== props.selectedIndex) {
+                            props.setSelectedIndex(route.selectedIndex)
                         }
                     }
                     break;
@@ -178,12 +177,12 @@ export default function Header(props) {
             }
         })
 
-    }, [value, menuOptions, selectedIndex, routes]);
+    }, [props.value, menuOptions, props.selectedIndex, routes]);
 
     const tabs = (
         <React.Fragment>
             <Tabs 
-            value={value}  
+            value={props.value}  
             className={classes.tabContainer}
             onChange={handleChange}
             indicatorColor="primary"
@@ -218,8 +217,8 @@ export default function Header(props) {
              {menuOptions.map((option, i) => (
                  <MenuItem key={`${option}${i}`} component={Link} to={option.link} 
                  classes={{root: classes.menuItem}}
-                 onClick={(event) => {handleMenuItemClick(event,i); setValue(1); handleClose()}}
-                 selected={i=== selectedIndex && value ===1}
+                 onClick={(event) => {handleMenuItemClick(event,i); props.setValue(1); handleClose()}}
+                 selected={i=== props.selectedIndex && props.value ===1}
                  >
                    {option.name}
                  </MenuItem>
@@ -247,9 +246,9 @@ export default function Header(props) {
                       component={Link} 
                       to={route.link}
                       classes={{selected: classes.drawerItemSelected}}
-                      selected={value === route.activeIndex} 
+                      selected={props.value === route.activeIndex} 
                       onClick={() => {setOpenDrawer(false); 
-                      setValue(route.activeIndex)}}
+                      props.setValue(route.activeIndex)}}
                       >
                           <ListItemText 
                           className={classes.drawerItem} 
@@ -261,11 +260,11 @@ export default function Header(props) {
                   <ListItem 
                   className={classes.drawerItemEstimate}
                   classes={{roote: classes.drawerItemEstimate, selected: classes.drawerItemSelected}} 
-                  onClick={() => {setOpenDrawer(false); setValue(5)}}  
+                  onClick={() => {setOpenDrawer(false); props.setValue(5)}}  
                   divider 
                   button 
                   component={Link} to="/estimate"
-                  selected ={value === 5}
+                  selected ={props.value === 5}
                   >
                       <ListItemText className={classes.drawerItem} disableTypography>
                           Free Estimate
@@ -284,7 +283,7 @@ export default function Header(props) {
         <ElevationScroll>
         <AppBar position="fixed" className={classes.appbar}>
             <Toolbar disableGutters>
-            <Button component={Link} to="/" className={classes.logoContainer} onClick={()=> setValue(0) } disableRipple>
+            <Button component={Link} to="/" className={classes.logoContainer} onClick={()=> props.setValue(0) } disableRipple>
             <svg className={classes.logo} id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 139" > <style>{`.st0{fill:none}.st1{fill:#fff}.st2{font-family:Raleway; font-weight:300}.st6{fill:none;stroke:#000;stroke-width:3;stroke-miterlimit:10}`}</style> <path d="M448.07-1l-9.62 17.24-8.36 14.96L369.93 139H-1V-1z" /> <path className="st0" d="M-1 139h479.92v.01H-1z" /> <text transform="translate(261.994 65.233)" className="st1 st2" fontSize="57" > Arc </text> <text transform="translate(17.692 112.015)" className="st1 st2" fontSize="54" > Development </text> <path className="st0" d="M382.44 116.43l47.65-85.23 8.36-14.96M369.83 139l-.01.01L362 153" /> <path d="M438.76 15.76l-56.42 100.91c-12.52-10.83-20.45-26.82-20.45-44.67 0-32.58 26.42-59 59-59 6.23 0 12.24.97 17.87 2.76z" fill="#0b72b9" /> <path d="M479.89 72c0 32.58-26.42 59-59 59-14.73 0-28.21-5.4-38.55-14.33l56.42-100.91c23.85 7.57 41.13 29.89 41.13 56.24z" /> <g id="Group_186" transform="translate(30.153 11.413)"> <g id="Group_185"> <g id="Words"> <path id="Path_59" className="st1" d="M405.05 14.4l-.09 80.38-7.67-.01.06-52.25-29.4 52.21-7.94-.01 45.04-80.32z" /> </g> </g> </g> <path className="st0" d="M457-17l-8.93 16-9.62 17.24-8.36 14.96L369.93 139l-.01.01L361 155" /> </svg>
             </Button>
              {matches ? drawer : tabs}
