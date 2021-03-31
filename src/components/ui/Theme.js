@@ -51,8 +51,13 @@ export default createMuiTheme({
         subtitle1: {
             fontSize: "1.25rem",
             fontWeight: 300,
-            color: arcGrey
+            color: "white"
 
+        },
+        subtitle2: {
+            color: "1.25rem",
+            fontWeight: 300,
+            color: arcGrey
         },
         learnButton: {
             borderColor: `${arcBlue}`,
