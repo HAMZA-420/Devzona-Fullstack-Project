@@ -15,6 +15,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import revolutionBackground from '../assets/repeatingBackground.svg';
 import infoBackground from '../assets/infoBackground.svg';
+import CallToAction from './ui/CallToAction';
 
 
 const useStyles = makeStyles(theme => ({
@@ -285,7 +286,7 @@ export default function LandingPage() {
                           <Typography variant="h2" style={{color: "white"}}>About Us</Typography>
                           <Typography variant="subtitle2">Let's get personal.</Typography>
                           <Grid item>
-                          <Button variant="outlined" style={{color: "white", borderColor: "white"}} className={classes.learnButtonHero}>
+                          <Button variant="outlined" style={{color: "white", borderColor: "white"}} className={classes.learnButton}>
                                   <span style={{marginRight: 10}}>Learn More</span>
                                   <ButtonArrow width={10} height={10} fill="white"/>
                               </Button>
@@ -297,7 +298,7 @@ export default function LandingPage() {
                           <Typography variant="h2" style={{color: "white"}}>Contact Us</Typography>
                           <Typography variant="subtitle2">Say hello! <span role="img" label="waving hand">👋</span></Typography>
                           <Grid item>
-                          <Button variant="outlined" style={{color: "white", borderColor: "white"}} className={classes.learnButtonHero}>
+                          <Button variant="outlined" style={{color: "white", borderColor: "white"}} className={classes.learnButton}>
                                   <span style={{marginRight: 10}}>Learn More</span>
                                   <ButtonArrow width={10} height={10} fill="white"/>
                               </Button>
@@ -307,6 +308,10 @@ export default function LandingPage() {
                   </Grid>
                   <div className={classes.infoBackground} />
               </Grid>
+          </Grid>
+
+          <Grid item> {/*-----Call To Action Block-----*/}
+            <CallToAction />
           </Grid>
           </Grid>
          
