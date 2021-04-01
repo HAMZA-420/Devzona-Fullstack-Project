@@ -7,6 +7,8 @@ import ButtonArrow from './ButtonArrow';
 import background from '../../assets/background.jpg';
 import mobileBackground from '../../assets/mobileBackground.jpg';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import {Link} from 'react-router-dom';
+
 
 const useStyles = makeStyles(theme => ({
     learnButton: {
@@ -43,11 +45,14 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down("sm")]: {
             marginLeft: 0,
             marginRight: 0
+        },
+        "&:hover": {
+            backgroundColor: theme.palette.secondary.light
         }
     }
 }))
 
-export default function CallToAction() {
+export default function CallToAction(props) {
     const classes = useStyles();
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -72,7 +77,7 @@ export default function CallToAction() {
                         Take advantage of the 21st Century.
                     </Typography>
                     <Grid container justify={matchesSM ? "center": undefined} item>
-                          <Button variant="outlined" className={classes.learnButton}>
+                          <Button onClick={() => props.setValue(2) } component={Link} to="/revolution" variant="outlined" className={classes.learnButton}>
                                   <span style={{marginRight: 5}}>Learn More</span>
                                   <ButtonArrow width={10} height={10} fill={theme.palette.common.blue}/>
                           </Button>
@@ -81,7 +86,15 @@ export default function CallToAction() {
             </Grid>
         </Grid>
         <Grid item >
-            <Button variant="contained" className={classes.estimateButton}>Free Estimate</Button>
+            <Button 
+            component={Link} 
+            to="/estimate" 
+            variant="contained" 
+            className={classes.estimateButton}
+            onClick={() => props.setValue(5) }
+            >
+                Free Estimate
+                </Button>
         </Grid>
     </Grid>
     )}
