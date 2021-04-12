@@ -7,7 +7,6 @@ import Button from '@material-ui/core/Button';
 import ButtonArrow from '../components/ui/ButtonArrow';
 import Typography from '@material-ui/core/Typography';
 import customSoftwareIcon from '../assets/Custom Software Icon.svg';
-import { ArrowBack } from '@material-ui/icons';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import mobileAppsIcon from '../assets/mobileIcon.svg';
 import websitesIcon from '../assets/websiteIcon.svg';

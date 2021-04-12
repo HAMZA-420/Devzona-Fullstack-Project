@@ -1,13 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Typography from '@material-ui/core/Typography';
 import Lottie from 'react-lottie';
 import vision from '../assets/vision.svg'
-import technologyAnimation from '../animations/technologyAnimation/data.json';
 import consultation from '../assets/consultationIcon.svg';
 import mockup from '../assets/mockupIcon.svg';
 import review from '../assets/reviewIcon.svg';
@@ -39,7 +36,7 @@ export default function Revolution() {
     const defaultOptions = {
         loop: true,
         autoplay: true, 
-        animationData: technologyAnimation,
+        animationData: techonologyAnimation,
         rendererSettings: {
           preserveAspectRatio: 'xMidYMid slice'
         }
