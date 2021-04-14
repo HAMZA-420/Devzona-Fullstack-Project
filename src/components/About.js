@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -136,7 +136,7 @@ export default function About(props) {
                             I have developed various web and mobile apps.This website is also developed by me.
                             I am expertise in devops,aws,mobile/web app Development.
                         </Typography>
-                        <Typography variant="body1" align="center" paragraph>I'm always ready to apply my knowledge to help others with the intution I have developed</Typography>
+                        <Typography variant="body1" align="center" paragraph>I'm always ready to apply my knowledge to help others with my amazing skills</Typography>
                     </Grid>
                     </Hidden>
                 <Grid item container justify={matchesMD ? "center": undefined}>
@@ -163,7 +163,7 @@ export default function About(props) {
                             I have developed various web and mobile apps.This website is also developed by me.
                             I am expertise in devops,aws,mobile/web app Development.
                         </Typography>
-                        <Typography variant="body1" align="center" paragraph>I'm always ready to apply my knowledge to help others with the intution I have developed</Typography>
+                        <Typography variant="body1" align="center" paragraph>I'm always ready to apply my knowledge to help others with my amazing skills</Typography>
                     </Grid>
                     </Hidden>
                     <Grid item container direction="column" alignItems={matchesMD ? "center":"flex-end"} lg>

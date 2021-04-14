@@ -78,6 +78,28 @@ export default createMuiTheme({
             borderRadius: 50,
             fontFamily: "Robonto",
             fontWeight: "bold",
+        },
+    },
+    overrides: {
+        MuiInputLabel: {
+            root: {
+                color: arcBlue,
+                fontSize: "1rem"
+            }
+        },
+        MuiInput: {
+            root: {
+                color: arcGrey,
+                fontWeight: 300
+            },
+            underline: {
+                "&.before": {
+                    borderBottom: `2px solid ${arcBlue}`
+                },
+                "&:hover:not($disabled):not($focused):not($error):before":{
+                    borderBottom: `2px solid ${arcBlue}`
+                }
+            }
         }
     }
 });
