@@ -1,4 +1,5 @@
 import React,{useState} from 'react';
+import axios from 'axios';
 import {cloneDeep} from 'lodash';
 import Lottie from 'react-lottie';
 import Button from '@material-ui/core/Button';
@@ -11,6 +12,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField';
+import Snackbar from "@material-ui/core/Snackbar";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 import check from '../assets/check.svg'
@@ -353,6 +356,9 @@ export default function Estimate() {
     const [category, setCategory] = useState("")
     const [users, setUsers] = useState("")
 
+    const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({open: false, message: "",
+    backgroundColor: ""})
 
     const defaultOptions = {
         loop: true,
@@ -569,6 +575,58 @@ export default function Estimate() {
     }
   }
 
+  const sendEstimate =()=> {
+    setLoading(true)
+    axios.get(
+      "https://us-central1-devzona-ff260.cloudfunctions.net/sendMail",{params: {
+          name: name,
+          email: email,
+          phone: phone,
+          message: message,
+          total: total,
+          category: category,
+          service: service,
+          platforms: platforms,
+          features: features,
+          customFeatures: customFeatures,
+          users: users
+      }}   
+  ).then(res => {
+    setLoading(false)
+    setAlert({open: true, message: "Message sent successfully!", 
+            backgroundColor: "#4BB543"     
+        });
+    setDialogOpen(false)
+  })
+  .catch(err => {
+    console.error(err);
+    setLoading(false); 
+    setAlert({open: true, message:
+    "Something went wrong, please try again", backgroundColor: "#FF3232"
+});})
+  }
+
+  
+  const estimateDisabled = () => {
+    let disabled = true;
+
+    const emptySelections = questions.map(question => 
+      question.options.filter(option => option.selected)).filter(question =>
+        question.length === 0);
+
+        if(questions.length === 2) {
+          if(emptySelections.length === 1) {
+            disabled = false
+          }
+        } else if (questions.length === 1) {
+          disabled = true
+        } else if (emptySelections.length < 3 && questions[questions.length 
+          -1].options.filter(option => option.selected).length > 0) {
+           disabled = false
+        }
+        return disabled
+  }
+
   const softwareSelection = (
     <Grid container direction="column" style={{marginBottom: "1.25em"}}>
                       <Grid item container alignItems="center">
@@ -726,10 +784,11 @@ export default function Estimate() {
                     </Typography>
                     </Grid>
                     <Grid item container>
-                        {question.options.map(option =>(
+                        {question.options.map((option,index) =>(
                             <Grid 
                             item 
                             container 
+                            key={index}
                             direction="column" 
                             md 
                             component={Button}
@@ -774,6 +833,7 @@ export default function Estimate() {
                 </Grid>
                 <Grid item>
                     <Button 
+                    disabled={estimateDisabled()}
                     variant="contained" 
                     className={classes.estimateButton}
                     onClick={() => {
@@ -843,11 +903,17 @@ export default function Estimate() {
                     rows={10} 
                     value={message} 
                     className={classes.message} 
+                    placeholder="Tell us more about your project"
                     id="message" 
                     onChange={event => setMessage(event.target.value)} />
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1" align={matchesSM?"center": undefined} paragraph>
+                    <Typography 
+                    variant="body1" 
+                    align={matchesSM?"center": undefined} 
+                    paragraph
+                    style={{lineHeight: 1.25}}
+                    >
                       We can create this digital solution for an estimated <span 
                       className={classes.specialText}>{total.toFixed(2)}</span>
                     </Typography>
@@ -870,10 +936,16 @@ export default function Estimate() {
                     </Grid>
                     </Hidden>
                    <Grid item>
-                    <Button variant="contained" className={classes.estimateButton}>
-                      Place Request
+                    <Button variant="contained" className={classes.estimateButton}
+                    onClick={sendEstimate}
+                    disabled={name.length === 0 || email.length=== 0|| phone.length===0 ||
+                    phoneHelper.length!==0 || emailHelper.length !==0 || message.length===0}>
+                      {loading ? <CircularProgress /> : 
+                      <React.Fragment>
+                         Place Request
                       <img src={send} alt="paper airplane" style={{marginLeft: "0.5em"}} />
-                    </Button>
+                      </React.Fragment>}
+                      </Button>
                   </Grid>
                   <Hidden mdUp>
                   <Grid item style={{marginBottom: matchesSM ? "5em":0}}>
@@ -886,6 +958,13 @@ export default function Estimate() {
                 </Grid>
               </DialogContent>
             </Dialog>
+            <Snackbar open={alert.open}
+             message={alert.message} 
+             ContentProps={{style: {backgroundColor: alert.backgroundColor}}} 
+             anchorOrigin={{vertical: "top", horizontal: "center"}} 
+             onClose={() => setAlert({...alert, open: false})}
+             autoHideDuration={4000}
+             />
             </Grid>
     )
 }
